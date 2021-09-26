@@ -1,14 +1,7 @@
 Keylogger Projesi:
 
-	
-
-	  		
 
 Programlama dili : 	Python
-
-Yapılacaklar: 
-Python programlama dilinin web kısmında kullanılan bir framework’ü olan Django ve web sunucusu ile bir tool hazırlamayı düşünüyoruz. Python programlama dili ile de keylogger kodlarımızı hazırlayacağız. Projemiz ilerleyen aşamalarda geliştireceğiz.
-
 
 Keylogger nedir?
 
