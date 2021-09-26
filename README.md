@@ -1,7 +1,7 @@
 Keylogger Projesi:
 
-Proje Grubu: 		Songül Kızılay	
-Hatice Yücekaya Pamuk
+	
+
 	  		
 
 Programlama dili : 	Python
